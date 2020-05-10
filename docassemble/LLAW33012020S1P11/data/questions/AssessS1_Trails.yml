@@ -73,21 +73,23 @@ subquestion: |
   Your Documents| ${ id_documents_has.true_values() }
   
   % if id_apply['Drivers Licence']:
-  You have selected **Drivers Licence**, click the link to begin
-  https://www.google.com/
+  You have selected **Drivers Licence**, [Click Here to Apply](https://www.sa.gov.au/topics/driving-and-transport/licences/new-drivers)
   % endif
   
   % if id_apply['Proof of Age Card']:
-  You like peaches.
+  You have selected **Proof of Age Card**, [Click Here to Apply] (https://www.sa.gov.au/topics/driving-and-transport/licences/proof-of-age-card)
   % endif
+  
   % if id_apply['Tax File Number']:
-  You like pears.
+  You have selected **Tax File Number**, [Click Here to Apply] (https://identityservice.auspost.com.au/ato/landing)
   % endif
+  
   % if id_apply['Birth Certificate']:
-  You like pears.
+  You have selected **Birth Certificate**, [Click Here to Apply] (https://bdm.cbs.sa.gov.au/bdmsaonline/dbnet.aspx?DBCGM=1&PRPRC=OAC)
   % endif
+  
   % if id_apply['Passport']:
-  You like pears.
+  You have selected **Passport**, [Click Here to Apply] (https://online.passports.gov.au/Infiniti/Produce/Account/Login?ReturnUrl=%2FInfiniti%2FProduce%2Fwizard%2F8100b655-57b0-47fb-84c2-44fdbbb02c02%2F)
   % endif
 
 ---
