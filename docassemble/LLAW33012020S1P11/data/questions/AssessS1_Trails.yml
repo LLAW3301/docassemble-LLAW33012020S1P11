@@ -1,0 +1,129 @@
+---
+objects:
+  - endpoint: DADict
+---
+mandatory: True
+question: Hutt Street Centre ID Navigator
+subquestion: |
+  
+  Welcome to the Hutt Street Centre ID Navigator. Here we will direct you to the appropriate ID application.
+
+  ***Disclaimer:***  
+  **This advice is not to be taken as genuine legal advice and is not a substitute for you seeking independent legal advice. Hutt Street Centre makes no representation that the information in this application is current.**
+
+  If you continue you accept these terms.
+buttons:
+  - "I accept and want to continue": continue
+  - "I do not accept": restart
+---
+mandatory: True
+code: |
+  if YC_Age_ok and sa_resident_ok == True:
+    endpoint['eligible']
+  else:
+    endpoint['ineligible']
+---
+question: |
+  Age Eligibility
+fields:
+  - Are You 18+ Years of Age?: YC_Age
+    input type: radio
+    choices:
+      - Yes
+      - No
+---
+code: |
+  if YC_Age == 'Yes':
+    YC_Age_ok = True
+  else:
+    YC_Age_ok = False
+  
+  if sa_resident == 'Yes':
+    sa_resident_ok = True
+  else:
+    sa_resident_ok = False    
+---
+event: endpoint['ineligible']
+question: Eligibility Requirements Not Met
+subquestion:
+  It appears you do not meet our eligibility requirements. 
+  **This application can only be used if you are 18+ Years of Age and a South Australian Resident**.
+  Please see SA Youth Services for your enquiry.
+  
+buttons:
+  - Restart: restart
+  - "Youth Services": exit
+    url: https://officeforyouth.sa.gov.au/resources
+---
+event: endpoint['eligible']
+
+mandatory: True
+question: Eligibility Requirements Met
+subquestion: |
+  ### Your Information
+  
+  You have completed the Hutt Street ID Navigator.
+  
+  Below is a summary of the information you have provided, **please check to ensure the information you have provided is accurate.** If you do find an error, please select the 'Do it Again' button.
+  
+  Question|Answer
+  -------|-------
+    Age Eligible| ${ YC_Age }
+     SA Resident| ${ sa_resident }
+  Your Documents| ${ id_documents_has.true_values() }
+  
+  % if id_apply['Drivers Licence']:
+  You have selected **Drivers Licence**, click the link to begin
+  https://www.google.com/
+  % endif
+  
+  % if id_apply['Proof of Age Card']:
+  You like peaches.
+  % endif
+  % if id_apply['Tax File Number']:
+  You like pears.
+  % endif
+  % if id_apply['Birth Certificate']:
+  You like pears.
+  % endif
+  % if id_apply['Passport']:
+  You like pears.
+  % endif
+
+---
+question: |
+  Location
+fields:
+  - Are you a South Australian Resident?: sa_resident
+    input type: radio
+    choices:
+      - Yes
+      - No
+---
+question: Current Documents
+subquestion: |
+  Please select the ID documents you have.
+fields:
+  - no label: id_documents_has
+    datatype: checkboxes
+    choices:
+      - Drivers Licence
+      - Proof of Age Card
+      - Tax File Number
+      - Birth Certificate
+      - Passport
+      - None
+---
+question: |
+  Wanted Documents
+fields:
+  - "Select the ID Documents you want to apply for": id_apply
+    datatype: checkboxes
+    choices:
+      - Drivers Licence
+      - Proof of Age Card
+      - Tax File Number
+      - Birth Certificate
+      - Passport
+      - Medicare Card
+---
