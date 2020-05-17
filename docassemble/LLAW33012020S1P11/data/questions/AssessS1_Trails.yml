@@ -3,10 +3,10 @@ objects:
   - endpoint: DADict
 ---
 mandatory: True
-question: Hutt Street Centre ID Navigator
+question: Hutt Street Centre - MyDocs
 subquestion: |
   
-  Welcome to the Hutt Street Centre ID Navigator. Here we will direct you to the appropriate ID application.
+  Welcome to Hutt Street Centre - MyDocs. Here we will direct you to your required ID application.
 
   ***Disclaimer:***  
   **This advice is not to be taken as genuine legal advice and is not a substitute for you seeking independent legal advice. Hutt Street Centre makes no representation that the information in this application is current.**
@@ -15,6 +15,10 @@ subquestion: |
 buttons:
   - "I accept and want to continue": continue
   - "I do not accept": restart
+features:
+  css: IDNavigationColours.css
+  debug: True
+  hide standard menu: False
 ---
 mandatory: True
 code: |
@@ -73,21 +77,98 @@ subquestion: |
   Your Documents| ${ id_documents_has.true_values() }
   
   % if id_apply['Drivers Licence']:
-  You have selected **Drivers Licence**, click the link to begin
-  https://www.google.com/
+  You have selected **Drivers Licence**. For people aged at least 16 years who wish to obtain a South Australian driver’s licence and have never held an interstate or overseas licence. 
+  
+  You must obtain a learner's permit before you can become a fully licensed driver. 
+  
+  To book a learner's theory test, call Service SA on **13 10 84**.
   % endif
   
   % if id_apply['Proof of Age Card']:
-  You like peaches.
+  If you have a South Australian photographic driver’s licence or learner’s permit, or have had one in the past, you can apply online.
+  
+  Copy and paste the following link into your browser to apply for a Proof of Age Card:
+  
+  Without a mySA GOV account, will need a client number - 
+  https://www.ecom.transport.sa.gov.au/et/issueAProofOfAgeCard.do 
+  
+  To apply for a mySA GOV account - 
+  https://account.sa.gov.au/auth/realms/sa/protocol/openid-connect/registrations?client_id=ezyreg-account&redirect_uri=https%3A%2F%2Faccount.ezyreg.sa.gov.au%2Faccount%2Fhome.htm&response_type=code
+  
+  If you haven't previously established your identity with Service SA, you'll need to apply in person. Please visit service.sa.gov.au 
+  or call **13 10 84** for assistance.
   % endif
+  
   % if id_apply['Tax File Number']:
-  You like pears.
+  To apply for a Tax File Number, copy and paste the following link into your browser:
+  
+  https://taxfilenumber.org/registration-form/
   % endif
+  
   % if id_apply['Birth Certificate']:
-  You like pears.
+  To apply for a birth certificate, you will need either a **driver’s licence** or a **proof of age card** to get started. 
+  Restart this application if you have not got one of these yet.
+  
+  To apply for a Birth Certificate, copy and paste the following link into your browser:
+  
+  https://bdm.cbs.sa.gov.au/bdmsaonline/dbnet.aspx?DBCGM=1&PRPRC=OAC
   % endif
+  
   % if id_apply['Passport']:
-  You like pears.
+  Create an AusPassport account: 
+  https://online.passports.gov.au/Infiniti/Produce/Account/Login?ReturnUrl=%2FInfiniti%2FProduce%2Fwizard%2F8100b655-57b0-47fb-84c2-44fdbbb02c02%2F
+  
+  To create an account, you must:
+  
+  - confirm you are aged 18 or over
+  
+  - accept the terms and conditions of use
+  
+  - provide personal details (using the name to be displayed on your passport)
+  
+  - provide an email address
+  
+  - set a password and secret questions and answers to assist with self-service password resets.
+  
+  Once you have completed the steps above, an email will be sent to your email address with a link to verify and activate your account.
+  
+  Once you have created your account, follow this quick guide process to apply for a passport online: https://www.passports.gov.au/passports-explained/quick-guide-online-application
+  % endif
+  
+  % if id_apply['Seniors Card']:
+  To apply for a Senior's Card, copy and paste the following link into your browser:
+  
+  https://seniorscard.secure.force.com/SeniorsCard/
+  
+  To apply online you'll need one of these:
+  
+  - driver's licence number
+  
+  - Medicare number
+  
+  - pension card number.
+  
+  There is no income or pension limit and the card is issued free of charge.
+  % endif
+  
+  % if id_apply['Medicare Card']:
+  attachment:
+    docx template file: Medicare enrolment form (MS004).pdf
+  % endif
+  
+  % if id_apply['Centrelink Health Care Card']:
+  Use this form to claim a Low-Income Health Care Card or a Health Care Card for a foster child.
+  
+  You can get a Low-Income Health Care Card if you’re either:
+  
+  - 19 or older
+  
+  - younger than 19 and are independent
+  
+  - younger than 19 and eligible for Family Tax Benefit.
+  
+  attachment:
+    docx template file: Claim for a Health Care Card.pdf
   % endif
 
 ---
@@ -109,10 +190,12 @@ fields:
     choices:
       - Drivers Licence
       - Proof of Age Card
+      - Seniors Card
       - Tax File Number
       - Birth Certificate
       - Passport
-      - None
+      - Medicare Card
+      - Centrelink Health Care Card
 ---
 question: |
   Wanted Documents
@@ -122,8 +205,10 @@ fields:
     choices:
       - Drivers Licence
       - Proof of Age Card
+      - Seniors Card
       - Tax File Number
       - Birth Certificate
       - Passport
       - Medicare Card
+      - Centrelink Health Care Card
 ---
