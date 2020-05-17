@@ -59,6 +59,46 @@ buttons:
   - "Youth Services": exit
     url: https://officeforyouth.sa.gov.au/resources
 ---
+code: |
+  # Ask what kinds of identity do you have?
+  id_documents_has
+  
+  # Ask what kind of document do you need?
+  id_apply
+  
+  # Work some magic
+  # What kind of documents do we need for each id_apply? <-- data block
+  for YCitem i id_apply.true_values():
+    document_list = required_documents[YCitem]
+    for a_document in document_list:
+      if we have this document:
+        add to the 'we have list'
+      else:
+        add it to the 'don't have list'
+           
+  
+  # This is the ID that you need
+  
+  # Display the final screen
+  run_the_code_block = ''
+---
+variable name: required_documents
+use objects: True
+data:
+  Drivers Licence:
+    - Birth certificate
+    - Stat Dec
+  Proof of Age Card:
+    - 100 points
+  Tax File Number:
+    - Birth certificate
+    - Bank statement
+  Birth Certificate:
+    - who knows?
+  Passport: 
+    - Old passport
+    - Birth certificate
+---
 event: endpoint['eligible']
 
 mandatory: True
