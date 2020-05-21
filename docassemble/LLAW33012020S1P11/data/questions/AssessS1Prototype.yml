@@ -1,0 +1,363 @@
+---
+objects:
+  - endpoint: DADict
+  - has_primary_documents_list: DAList.using(auto_gather=False)
+  - pretty_primary_documents_list: DAList.using(auto_gather=False)
+  - has_secondary_documents_list: DAList.using(auto_gather=False)
+  - pretty_secondary_documents_list: DAList.using(auto_gather=False)
+---
+mandatory: True
+question: Hutt St Centre - MyDocs
+subquestion: |
+  
+  Welcome to Hutt St Centre - MyDocs. Here we will direct you to your required ID application.
+  ***Disclaimer:***  
+  **This advice is not to be taken as genuine legal advice and is not a substitute for you seeking independent legal advice. Hutt St Centre makes no representation that the information in this application is current.**
+  If you continue you accept these terms.
+buttons:
+  - "I accept and want to continue": continue
+  - "I do not accept": restart
+---
+features:
+  css: IDNavigationColours.css
+  debug: True
+  hide standard menu: False
+---
+metadata:
+  title: |
+    MyDocs
+  description: |
+    Hutt St Centre -  ID Navigation Application
+  authors:
+    - name: Yianni Chapley, Olympia Balopitos, Laura Stephenson
+      organization: Flinders University
+  revision_date: 10-June-2020
+---
+mandatory: True
+code: |
+  if YC_Age_ok and sa_resident_ok == True:
+    endpoint['eligible']
+  else:
+    endpoint['ineligible']
+---
+question: |
+  Age 
+fields:
+  - Are You 18+ Years of Age?: YC_Age
+    input type: radio
+    choices:
+      - Yes
+      - No
+---
+code: |
+  if YC_Age == 'Yes':
+    YC_Age_ok = True
+  else:
+    YC_Age_ok = False
+  
+  if sa_resident == 'Yes':
+    sa_resident_ok = True
+  else:
+    sa_resident_ok = False    
+---
+event: endpoint['ineligible']
+question: Eligibility Requirements Not Met
+subquestion:
+  It appears you do not meet our eligibility requirements. 
+  **This application can only be used if you are 18+ Years of Age and a South Australian Resident**.
+  Please see SA Youth Services for your enquiry.
+  
+buttons:
+  - Restart: restart
+  - "Youth Services": exit
+    url: https://officeforyouth.sa.gov.au/resources
+---
+variable name: required_documents
+use objects: True
+data:
+  drivers_licence:
+    Name: Drivers Licence
+    primary_docs: 1
+    secondary_docs: 2
+    id_type: primary
+  proof_of_age:
+    Name: Proof of Age Card
+    primary_docs: 1
+    secondary_docs: 2
+    id_type: primary
+  tax_file_number:
+    Name: Tax File Number
+    primary_docs: 1
+    secondary_docs: 2
+    id_type: secondary
+  birth_certificate:
+    Name: Birth Certificate
+    primary_docs: 1
+    secondary_docs: 2
+    id_type: primary
+  passport:
+    Name: Passport
+    primary_docs: 1
+    secondary_docs: 1
+    id_type: primary
+  seniors_card:
+    Name: Seniors Card
+    primary_docs: 1
+    secondary_docs: 0
+    id_type: secondary
+  medicare_card:
+    Name: Medicare Card
+    primary_docs: 2
+    secondary_docs: 2
+    id_type: secondary
+  centrelink_card:
+    Name: Centrelink Health Care Card
+    primary_docs: 1
+    secondary_docs: 1
+    id_type: secondary
+---
+# Construct number of primary documents
+code: |
+  # Get each document that the user already has.
+  # Check each document to work out whether it is
+  # primary or not.
+  has_primary_documents_list.clear()
+  for an_item in id_documents_has.true_values():
+    # If it is, add it to a primary documents list
+    if required_documents[an_item]['id_type'] == 'primary':
+      has_primary_documents_list.append(an_item)
+  has_primary_documents_list.gathered = True
+---
+code: |
+  # Get each document that the user already has.
+  # Check each document to work out whether it is
+  # secondary or not.
+  has_secondary_documents_list.clear()
+  for an_item in id_documents_has.true_values():
+    # If it is, add it to a secondary documents list
+    if required_documents[an_item]['id_type'] == 'secondary':
+      has_secondary_documents_list.append(an_item)
+  has_secondary_documents_list.gathered = True
+---
+# Uses the proper names of the documents
+code: |
+  pretty_primary_documents_list.clear()
+  for an_item in has_primary_documents_list:
+    pretty_primary_documents_list.append(required_documents[an_item]['Name'])
+  pretty_primary_documents_list.gathered = True
+---
+code: |
+  pretty_secondary_documents_list.clear()
+  for an_item in has_secondary_documents_list:
+    pretty_secondary_documents_list.append(required_documents[an_item]['Name'])
+  pretty_secondary_documents_list.gathered = True
+---
+event: endpoint['eligible']
+question: MyDocs Completed
+subquestion: |
+  
+  You have completed Hutt St Centre's MyDocs.
+  
+  Below is a summary of the information you have provided, **please check to ensure the information you have provided is accurate.** If you do find an error, please restart the program.
+  
+  Question|Answer
+  -------|-------
+    Age Eligible| ${ YC_Age }
+     SA Resident| ${ sa_resident }
+  You have these Primary Documents| ${ pretty_primary_documents_list.comma_and_list() }
+  You have these Secondary Documents| ${ pretty_secondary_documents_list.comma_and_list() }
+  
+  *ID you have chosen to apply for:*
+  
+  %for an_item in id_apply.true_values():
+  ### ${ required_documents[an_item]['Name'] }
+  
+  %if required_documents['drivers_licence']['primary_docs']> len(has_primary_documents_list):
+  
+  You need **${required_documents['drivers_licence']['primary_docs']}**
+  'primary' document(s) to apply.  You currently have 
+  **${len(has_primary_documents_list)}** document(s)  
+  
+    You can fill out a statutory declaration [here](https://www.sa.gov.au/__data/assets/pdf_file/0011/11432/MR28.pdf)
+    
+    A statutory declaration form can be filled out if you do not have any primary documents. You can use this form as a primary document. It is a written statement that you sign and declare to be true in front of an authorised witness, such as a Justice of the Peace.
+  
+  Examples of secondary documents you can use may be:
+  
+    - A current entitlement card issued by a Commonwealth Government Department (e.g. a Medicare card, Centrelink Basics Card).
+    
+    - A current credit card or ATM card from a financial institution (e.g. Commonwealth Bank, BankSA etc.).
+    
+    - Telephone, gas or electricity account not more than six months old.
+    
+    - Water or local rates notice or land valuation notice not more than two years old.
+    
+    - Evidence of electoral enrolment not more than two years old.
+    
+    - Centrelink Health Care Card.
+    
+    - Centrelink Commonwealth Seniors Health Card.
+    
+    - Department of Veteran Affairs pensioner concession card.
+    
+  Examples of primary documents you can use may be:
+  
+  %for a_pd in required_documents:
+  %if required_documents[a_pd]['id_type'] == 'primary':
+  %if a_pd not in has_primary_documents_list:
+  - ${required_documents[a_pd]['Name']}
+  %endif
+  %endif
+  %endfor
+  %else:
+  You have enough primary documents to apply for a ${ required_documents[an_item]['Name'] }
+  %endif
+  
+  %endfor
+    
+  % if id_apply['drivers_licence']:
+  # Applying for a Drivers Licence 
+  For people aged at least 16 years who wish to obtain a South Australian driver’s licence and have never held an interstate or overseas licence. 
+  
+  You must obtain a learner's permit before you can become a fully licensed driver. 
+  
+  To book a learner's theory test, call Service SA on **13 10 84**.
+  
+  For more information about bookings, fees and tests, click [here](https://www.sa.gov.au/topics/driving-and-transport/licences/new-drivers)
+  % endif
+  
+  % if id_apply['proof_of_age']:
+   
+  # Applying for a Proof of Age Card
+   
+  If you have a South Australian photographic driver’s licence or learner’s permit, or have had one in the past, you can apply [online](https://www.sa.gov.au/topics/driving-and-transport/licences/proof-of-age-card)
+  
+  If you haven't previously established your identity with Service SA, you'll need to apply in person. Please visit service.sa.gov.au 
+  or call **13 10 84** for assistance.
+  % endif
+  
+  % if id_apply['tax_file_number']:
+  
+  # Applying for a Tax File Number
+  
+  To apply for a Tax File Number online, click [here](https://taxfilenumber.org/registration-form/) and follow the on-screen prompts.
+  % endif
+  
+  % if id_apply['birth_certificate']:
+ 
+  # Applying for a Birth Certificate
+  
+  To apply for a birth certificate, you will need either a **driver’s licence** or a **proof of age card** to get started. 
+  Restart this application if you have not got one of these yet.
+  
+  You can apply for a Birth Certificate [here](https://bdm.cbs.sa.gov.au/bdmsaonline/dbnet.aspx?DBCGM=1&PRPRC=OAC)
+  
+  % endif
+  
+  % if id_apply['passport']:
+  
+  # Applying for a Passport
+  
+  You must first create an AusPassport account [here](https://online.passports.gov.au/Infiniti/Produce/Account/Login?ReturnUrl=%2FInfiniti%2FProduce%2Fwizard%2F8100b655-57b0-47fb-84c2-44fdbbb02c02%2F)
+  
+  To create an account, you must:
+  
+  - confirm you are aged 18 or over
+  
+  - accept the terms and conditions of use
+  
+  - provide personal details (using the name to be displayed on your passport)
+  
+  - provide an email address
+  
+  - set a password and secret questions and answers to assist with self-service password resets.
+  
+  Once you have completed the steps above, an email will be sent to your email address with a link to verify and activate your account.
+  
+  **Once you have created your account, follow this quick guide process to apply for a passport online [here](https://www.passports.gov.au/passports-explained/quick-guide-online-application)**
+  
+  % endif
+  
+  % if id_apply['seniors_card']:
+  
+  # Applying for a Seniors Card
+  
+  To apply for a Seniors Card online, click [here](https://seniorscard.secure.force.com/SeniorsCard/) and follow the on-screen prompts.
+  
+  To apply online you'll need one of the following:
+  
+  - Driver's Licence Number
+  
+  - Medicare Number
+  
+  - Pension Card Number.
+  
+  There is no income or pension limit and the card is issued free of charge.
+  % endif
+  
+  % if id_apply['medicare_card']:
+  
+  # Applying for Medicare Card
+  
+  To apply for a Medicare Card online, click [here](https://www.servicesaustralia.gov.au/individuals/subjects/how-enrol-and-get-started-medicare) and follow the on-screen prompts.
+  
+  Required supporting documents will differ depending on your citizenship status. Follow the on-page instructions.
+  
+  % endif
+  
+  % if id_apply['centrelink_card']:
+  
+  # Applying for a Low-Income Centrelink Health Care Card
+  
+  To apply for a Low-Income Health Care Card or a Health Care Card for a foster child online, click [here](https://www.servicesaustralia.gov.au/individuals/services/centrelink/low-income-health-care-card/who-can-get-card) and follow the on-screen prompts.
+  
+  You can get a Low-Income Health Care Card if you’re either:
+  
+  - 19 or older
+  
+  - younger than 19 and are independent
+  
+  - younger than 19 and eligible for Family Tax Benefit.
+  
+  % endif
+---
+question: |
+  Location
+fields:
+  - Are you a South Australian Resident?: sa_resident
+    input type: radio
+    choices:
+      - Yes
+      - No
+---
+question: Current Documents
+subquestion: |
+  Please select the ID documents you have.
+fields:
+  - no label: id_documents_has
+    datatype: checkboxes
+    choices:
+      - Drivers Licence: drivers_licence
+      - Proof of Age Card: proof_of_age
+      - Seniors Card: seniors_card
+      - Tax File Number: tax_file_number
+      - Birth Certificate: birth_certificate
+      - Passport: passport
+      - Medicare Card: medicare_card
+      - Centrelink Health Care Card: centrelink_card
+---
+question: |
+  Wanted Documents
+fields:
+  - "Select the ID Documents you want to apply for": id_apply
+    datatype: checkboxes
+    choices:
+      - Drivers Licence: drivers_licence
+      - Proof of Age Card: proof_of_age
+      - Seniors Card: seniors_card
+      - Tax File Number: tax_file_number
+      - Birth Certificate: birth_certificate
+      - Passport: passport
+      - Medicare Card: medicare_card
+      - Centrelink Health Care Card: centrelink_card
+---
