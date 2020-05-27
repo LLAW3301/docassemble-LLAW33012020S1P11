@@ -43,12 +43,12 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
     return out
 
 setup(name='docassemble.LLAW33012020S1P11',
-      version='0.0.1-21May2020',
+      version='0.0.1',
       description=('A docassemble extension.'),
-      long_description='# P11',
+      long_description='# docassemble.step0176\r\n\r\nA docassemble extension.\r\n\r\n## Author\r\n\r\nLaura Stephenson, step0176@flinders.edu.au\r\n\r\n',
       long_description_content_type='text/markdown',
-      author='Mark Ferraretto',
-      author_email='mark.ferraretto@flinders.edu.au',
+      author='Laura Stephenson',
+      author_email='step0176@flinders.edu.au',
       license='The MIT License (MIT)',
       url='https://docassemble.org',
       packages=find_packages(),

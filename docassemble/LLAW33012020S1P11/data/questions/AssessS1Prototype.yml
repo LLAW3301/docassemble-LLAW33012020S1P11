@@ -6,13 +6,19 @@ objects:
   - has_secondary_documents_list: DAList.using(auto_gather=False)
   - pretty_secondary_documents_list: DAList.using(auto_gather=False)
 ---
+decoration: hutt street logo
 mandatory: True
-question: Hutt St Centre - MyDocs
+question: MyDocs 
 subquestion: |
+  Welcome to  **MyDocs!**
   
-  Welcome to Hutt St Centre - MyDocs. Here we will direct you to your required ID application.
+  MyDocs is Hutt Street Centre's Identity Document Navigation service that will help to guide you through the process of obtaining an identity document.
+  
+  If you need assistance to use this service, please ask a staff member of Hutt Street Centre. 
+  
   ***Disclaimer:***  
-  **This advice is not to be taken as genuine legal advice and is not a substitute for you seeking independent legal advice. Hutt St Centre makes no representation that the information in this application is current.**
+  **This advice is not to be taken as genuine legal advice and is not a substitute for legal advice. Hutt St Centre makes no representation that the information in this application is current.**
+  
   If you continue you accept these terms.
 buttons:
   - "I accept and want to continue": continue
@@ -40,8 +46,9 @@ code: |
   else:
     endpoint['ineligible']
 ---
+decoration: age icon
 question: |
-  Age 
+  Age Eligibility 
 fields:
   - Are You 18+ Years of Age?: YC_Age
     input type: radio
@@ -61,10 +68,14 @@ code: |
     sa_resident_ok = False    
 ---
 event: endpoint['ineligible']
+decoration: no icon
 question: Eligibility Requirements Not Met
-subquestion:
+subquestion: |
+
   It appears you do not meet our eligibility requirements. 
-  **This application can only be used if you are 18+ Years of Age and a South Australian Resident**.
+  
+  **This application can only be used if you are 18+ years of Age.**
+  
   Please see SA Youth Services for your enquiry.
   
 buttons:
@@ -153,36 +164,45 @@ code: |
   pretty_secondary_documents_list.gathered = True
 ---
 event: endpoint['eligible']
+decoration: tick icon
 question: MyDocs Completed
 subquestion: |
   
-  You have completed Hutt St Centre's MyDocs.
+  You have now completed MyDocs!
   
-  Below is a summary of the information you have provided, **please check to ensure the information you have provided is accurate.** If you do find an error, please restart the program.
+  Below is a summary of the information you have provided. **Please check to ensure the information you have provided is correct.** 
   
-  Question|Answer
+  If you find an error, click the **Restart** button below. 
+  
+  Question|Your Answer
   -------|-------
     Age Eligible| ${ YC_Age }
      SA Resident| ${ sa_resident }
   You have these Primary Documents| ${ pretty_primary_documents_list.comma_and_list() }
   You have these Secondary Documents| ${ pretty_secondary_documents_list.comma_and_list() }
   
-  *ID you have chosen to apply for:*
+  ###*The ID you have chosen to apply for is:*
   
   %for an_item in id_apply.true_values():
   ### ${ required_documents[an_item]['Name'] }
   
   %if required_documents['drivers_licence']['primary_docs']> len(has_primary_documents_list):
   
-  You need **${required_documents['drivers_licence']['primary_docs']}**
-  'primary' document(s) to apply.  You currently have 
-  **${len(has_primary_documents_list)}** document(s)  
+  You will need **${required_documents['drivers_licence']['primary_docs']}**
+  'primary' document(s) to apply. You currently have 
+  **${len(has_primary_documents_list)}** document(s) 
   
-    You can fill out a statutory declaration [here](https://www.sa.gov.au/__data/assets/pdf_file/0011/11432/MR28.pdf)
+    You can download and fill out a statutory declaration form [here](https://www.sa.gov.au/__data/assets/pdf_file/0011/11432/MR28.pdf)
+   
+  ### Statutory Declaration
+  A **statutory declaration** form can be filled out if you do not have any  primary documents. You can use this form as a primary document. It is a written statement that you sign and declare to be true in front of an authorised witness, such as a Justice of the Peace. (add more about this process).
     
-    A statutory declaration form can be filled out if you do not have any primary documents. You can use this form as a primary document. It is a written statement that you sign and declare to be true in front of an authorised witness, such as a Justice of the Peace.
+    If you require assistance, a staff member of Hutt Street Centre will be able to help you fill out and submit your statutory declaration form. 
+    
+  ### Secondary Documents
+  A **secondary document** is a document that provides some personal information. This could include a combination of your photograph, full name, address, date of birth, or signature. 
   
-  Examples of secondary documents you can use may be:
+  Examples of **secondary documents** are:
   
     - A current entitlement card issued by a Commonwealth Government Department (e.g. a Medicare card, Centrelink Basics Card).
     
@@ -200,7 +220,8 @@ subquestion: |
     
     - Department of Veteran Affairs pensioner concession card.
     
-  Examples of primary documents you can use may be:
+  ### Primary Documents
+  A **primary document** is an identity document that must include your full name and date of birth. It may also include a combination of your photograph, address, place of birth, or signature. Examples of primary documents are:
   
   %for a_pd in required_documents:
   %if required_documents[a_pd]['id_type'] == 'primary':
@@ -213,11 +234,12 @@ subquestion: |
   You have enough primary documents to apply for a ${ required_documents[an_item]['Name'] }
   %endif
   
-  %endfor
+  %endfor 
+  
     
   % if id_apply['drivers_licence']:
-  # Applying for a Drivers Licence 
-  For people aged at least 16 years who wish to obtain a South Australian driver’s licence and have never held an interstate or overseas licence. 
+  ### Applying for a Drivers Licence 
+  For residents over 16 years of age who wish to obtain a South Australian driver’s licence and have never held an interstate or overseas licence: 
   
   You must obtain a learner's permit before you can become a fully licensed driver. 
   
@@ -228,27 +250,28 @@ subquestion: |
   
   % if id_apply['proof_of_age']:
    
-  # Applying for a Proof of Age Card
+  ### Applying for a Proof of Age Card
    
   If you have a South Australian photographic driver’s licence or learner’s permit, or have had one in the past, you can apply [online](https://www.sa.gov.au/topics/driving-and-transport/licences/proof-of-age-card)
   
-  If you haven't previously established your identity with Service SA, you'll need to apply in person. Please visit service.sa.gov.au 
+  If you have not previously established your identity with Service SA, you'll need to apply in person. Please visit service.sa.gov.au 
   or call **13 10 84** for assistance.
   % endif
   
   % if id_apply['tax_file_number']:
   
-  # Applying for a Tax File Number
+  ### Applying for a Tax File Number
   
   To apply for a Tax File Number online, click [here](https://taxfilenumber.org/registration-form/) and follow the on-screen prompts.
   % endif
   
   % if id_apply['birth_certificate']:
  
-  # Applying for a Birth Certificate
+  ### Applying for a Birth Certificate
   
   To apply for a birth certificate, you will need either a **driver’s licence** or a **proof of age card** to get started. 
-  Restart this application if you have not got one of these yet.
+  
+  Click the *restart* button below if you do not have either of these documents.
   
   You can apply for a Birth Certificate [here](https://bdm.cbs.sa.gov.au/bdmsaonline/dbnet.aspx?DBCGM=1&PRPRC=OAC)
   
@@ -256,7 +279,7 @@ subquestion: |
   
   % if id_apply['passport']:
   
-  # Applying for a Passport
+  ### Applying for a Passport
   
   You must first create an AusPassport account [here](https://online.passports.gov.au/Infiniti/Produce/Account/Login?ReturnUrl=%2FInfiniti%2FProduce%2Fwizard%2F8100b655-57b0-47fb-84c2-44fdbbb02c02%2F)
   
@@ -280,7 +303,7 @@ subquestion: |
   
   % if id_apply['seniors_card']:
   
-  # Applying for a Seniors Card
+  ### Applying for a Seniors Card
   
   To apply for a Seniors Card online, click [here](https://seniorscard.secure.force.com/SeniorsCard/) and follow the on-screen prompts.
   
@@ -297,7 +320,7 @@ subquestion: |
   
   % if id_apply['medicare_card']:
   
-  # Applying for Medicare Card
+  ### Applying for Medicare Card
   
   To apply for a Medicare Card online, click [here](https://www.servicesaustralia.gov.au/individuals/subjects/how-enrol-and-get-started-medicare) and follow the on-screen prompts.
   
@@ -307,7 +330,7 @@ subquestion: |
   
   % if id_apply['centrelink_card']:
   
-  # Applying for a Low-Income Centrelink Health Care Card
+  ### Applying for a Low-Income Centrelink Health Care Card
   
   To apply for a Low-Income Health Care Card or a Health Care Card for a foster child online, click [here](https://www.servicesaustralia.gov.au/individuals/services/centrelink/low-income-health-care-card/who-can-get-card) and follow the on-screen prompts.
   
@@ -320,9 +343,17 @@ subquestion: |
   - younger than 19 and eligible for Family Tax Benefit.
   
   % endif
+ 
+
+  
+buttons:
+ - Restart: restart
+ - Exit: exit
+   url: https://www.huttstcentre.org.au/
 ---
+decoration: sa icon
 question: |
-  Location
+  Location of Residence
 fields:
   - Are you a South Australian Resident?: sa_resident
     input type: radio
@@ -330,34 +361,71 @@ fields:
       - Yes
       - No
 ---
-question: Current Documents
+decoration: id want
+question: The Documents You Want
 subquestion: |
-  Please select the ID documents you have.
+ Please select the Identity Document(s) (ID) you wish to apply for:
+fields:
+ - no label: id_apply
+   datatype: checkboxes
+   choices:
+     - Drivers Licence: drivers_licence
+       image: drivers licence
+     - Proof of Age Card: proof_of_age
+       image: proof of age card
+     - Seniors Card: seniors_card
+       image: seniors card
+     - Tax File Number: tax_file_number
+       image: tax file number
+     - Birth Certificate: birth_certificate
+       image: birth certificate
+     - Passport: passport
+       image: passport
+     - Medicare Card: medicare_card
+       image: medicare card
+     - Centrelink Health Care Card: centrelink_card
+       image: centrelink health care card
+   none of the above: False
+---
+decoration: id current
+question: Your Current Documents
+subquestion: |
+  Please select the Identity Document(s) (ID) you currently have:
 fields:
   - no label: id_documents_has
     datatype: checkboxes
     choices:
       - Drivers Licence: drivers_licence
+        image: drivers licence
       - Proof of Age Card: proof_of_age
+        image: proof of age card
       - Seniors Card: seniors_card
+        image: seniors card
       - Tax File Number: tax_file_number
+        image: tax file number
       - Birth Certificate: birth_certificate
+        image: birth certificate
       - Passport: passport
+        image: passport
       - Medicare Card: medicare_card
+        image: medicare card
       - Centrelink Health Care Card: centrelink_card
+        image: centrelink health care card
 ---
-question: |
-  Wanted Documents
-fields:
-  - "Select the ID Documents you want to apply for": id_apply
-    datatype: checkboxes
-    choices:
-      - Drivers Licence: drivers_licence
-      - Proof of Age Card: proof_of_age
-      - Seniors Card: seniors_card
-      - Tax File Number: tax_file_number
-      - Birth Certificate: birth_certificate
-      - Passport: passport
-      - Medicare Card: medicare_card
-      - Centrelink Health Care Card: centrelink_card
+images:
+ passport: passport.jpg
+ proof of age card: poac.jpg
+ seniors card: seniors.jpg
+ tax file number: tfn.png
+ drivers licence: SAlicence.jpg
+ medicare card: medicare.jpg
+ centrelink health care card: chc.png
+ birth certificate: bc.gif
+ hutt street logo: huttstreet.png
+ age icon: 18plus.svg
+ id current: idcardscurrent.png
+ id want: idwant.png
+ sa icon: saicon.png
+ tick icon: tickicon.png
+ no icon: noicon.webp
 ---
