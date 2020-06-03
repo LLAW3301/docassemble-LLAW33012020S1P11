@@ -1,0 +1,492 @@
+  
+---
+objects:
+  - endpoint: DADict
+  - has_primary_documents_list: DAList.using(auto_gather=False)
+  - pretty_primary_documents_list: DAList.using(auto_gather=False)
+  - has_secondary_documents_list: DAList.using(auto_gather=False)
+  - pretty_secondary_documents_list: DAList.using(auto_gather=False)
+---
+decoration: hutt street logo
+mandatory: True
+question: MyDocs 
+subquestion: |
+  Welcome to  **MyDocs!**
+  
+  MyDocs is Hutt Street Centre's Identity Document Navigation service that will help to guide you through the process of obtaining an identity document.
+  
+  If you need assistance to use this service, please ask a staff member of Hutt Street Centre. 
+  
+  ***Disclaimer:***  
+  **This advice is not to be taken as genuine legal advice and is not a substitute for legal advice. Hutt St Centre makes no representation that the information in this application is current.**
+  
+  If you continue you accept these terms.
+buttons:
+  - "I accept and want to continue": continue
+  - "I do not accept": restart
+---
+features:
+  css: IDNavigationColours.css
+  debug: True
+  hide standard menu: False
+---
+metadata:
+  title: |
+    MyDocs
+  description: |
+    Hutt St Centre -  ID Navigation Application
+  authors:
+    - name: Yianni Chapley, Olympia Balopitos, Laura Stephenson
+      organization: Flinders University
+  revision_date: 10-June-2020
+---
+mandatory: True
+code: |
+  if YC_Age_ok and sa_resident_ok == True:
+    endpoint['eligible']
+  elif not YC_Age_ok:
+    endpoint['youth_ineligible']
+  elif not sa_resident_ok:
+    endpoint['resident_ineligible']
+  else: 
+    endpoint['ineligible']
+---
+decoration: age icon
+question: |
+  Age 
+fields:
+  - Are You 18+ Years of Age?: YC_Age
+    input type: radio
+    choices:
+      - Yes
+      - No
+---
+code: |
+  if YC_Age == 'Yes':
+    YC_Age_ok = True
+  else:
+    YC_Age_ok = False
+---
+code: |
+  if sa_resident == 'Yes':
+    sa_resident_ok = True
+  else:
+    sa_resident_ok = False    
+---
+event: endpoint['ineligible']
+decoration: no icon
+question: Eligibility Requirements Not Met
+subquestion: |
+  It appears you do not meet our eligibility requirements. 
+  
+  **This application can only be used if you are 18+ years of Age.**
+  
+  Please see SA Youth Services for your enquiry.
+  
+buttons:
+  - Restart: restart
+  - "Youth Services": exit
+    url: https://officeforyouth.sa.gov.au/resources
+---
+event: endpoint['youth_ineligible']
+decoration: no icon
+question: Age Eligibility Requirements Not Met
+subquestion: |
+  It appears you do not meet our age eligibility requirements. 
+  
+  **This application can only be used if you are 18+ years of Age.**
+  
+  Please see SA Youth Services for your enquiry.
+  
+buttons:
+  - Restart: restart
+  - "Youth Services": exit
+    url: https://officeforyouth.sa.gov.au/resources
+---
+event: endpoint['resident_ineligible']
+decoration: no icon
+question: Resident Eligibility Requirements Not Met
+subquestion: |
+  It appears you do not meet our resident eligibility requirements. 
+  
+  **This application can only be used if you are a South Australian resident.**
+  
+buttons:
+  - Restart: restart
+  - "Exit": exit
+    url: https://www.huttstcentre.org.au/
+---
+variable name: required_documents
+use objects: True
+data:
+  drivers_licence:
+    Name: Drivers Licence
+    primary_docs: 1
+    secondary_docs: 2
+    id_type: primary
+  proof_of_age:
+    Name: Proof of Age Card
+    primary_docs: 1
+    secondary_docs: 2
+    id_type: primary
+  tax_file_number:
+    Name: Tax File Number
+    primary_docs: 1
+    secondary_docs: 2
+    id_type: secondary
+  birth_certificate:
+    Name: Birth Certificate
+    primary_docs: 1
+    secondary_docs: 2
+    id_type: primary
+  passport:
+    Name: Passport
+    primary_docs: 1
+    secondary_docs: 1
+    id_type: primary
+  seniors_card:
+    Name: Seniors Card
+    primary_docs: 1
+    secondary_docs: 0
+    id_type: secondary
+  medicare_card:
+    Name: Medicare Card
+    primary_docs: 2
+    secondary_docs: 2
+    id_type: secondary
+  centrelink_card:
+    Name: Centrelink Health Care Card
+    primary_docs: 1
+    secondary_docs: 1
+    id_type: secondary
+---
+# Construct number of primary documents
+code: |
+  # Get each document that the user already has.
+  # Check each document to work out whether it is
+  # primary or not.
+  has_primary_documents_list.clear()
+  for an_item in id_documents_has.true_values():
+    # If it is, add it to a primary documents list
+    if required_documents[an_item]['id_type'] == 'primary':
+      has_primary_documents_list.append(an_item)
+  has_primary_documents_list.gathered = True
+---
+code: |
+  # Get each document that the user already has.
+  # Check each document to work out whether it is
+  # secondary or not.
+  has_secondary_documents_list.clear()
+  for an_item in id_documents_has.true_values():
+    # If it is, add it to a secondary documents list
+    if required_documents[an_item]['id_type'] == 'secondary':
+      has_secondary_documents_list.append(an_item)
+  has_secondary_documents_list.gathered = True
+---
+# Uses the proper names of the documents
+code: |
+  pretty_primary_documents_list.clear()
+  for an_item in has_primary_documents_list:
+    pretty_primary_documents_list.append(required_documents[an_item]['Name'])
+  pretty_primary_documents_list.gathered = True
+---
+code: |
+  pretty_secondary_documents_list.clear()
+  for an_item in has_secondary_documents_list:
+    pretty_secondary_documents_list.append(required_documents[an_item]['Name'])
+  pretty_secondary_documents_list.gathered = True
+---
+decoration: tick icon
+event: endpoint['eligible']
+question: MyDocs Completed
+subquestion: |
+  
+  You have now completed MyDocs!
+  
+  Below is a summary of the information you have provided. **Please check to ensure the information you have provided is correct.** 
+  
+  If you find an error, click the **Restart** button below. 
+  
+  ${table_code}
+  
+  ###The ID you have chosen to apply for is:
+  
+  %for an_item in id_apply.true_values():
+  ### ${ required_documents[an_item]['Name'] }
+  
+  %if required_documents[an_item]['primary_docs']> len(has_primary_documents_list):
+  
+  You need **${required_documents[an_item]['primary_docs']}**
+  'primary' document(s) to apply.  You currently have 
+  **${len(has_primary_documents_list)}** primary document(s)
+  %endif
+  
+  %if required_documents[an_item]['secondary_docs']> len(has_secondary_documents_list):
+  
+  You need **${required_documents[an_item]['secondary_docs']}**
+  'secondary' document(s) to apply.  You currently have 
+  **${len(has_secondary_documents_list)}** secondary document(s)
+  %endif
+  %endfor
+    
+  **Please refer to the end of this page for examples of primary and secondary documents.**
+    
+  ${ document_explainer }
+  
+  ${ example_documents }
+  
+buttons:
+ - Restart: restart
+ - Exit: exit
+   url: https://www.huttstcentre.org.au/
+---
+decoration: sa icon
+question: |
+  Location of Residence
+fields:
+  - Are you a South Australian Resident?: sa_resident
+    input type: radio
+    choices:
+      - Yes
+      - No
+---
+decoration: id want
+question: The Documents You Want
+subquestion: |
+ Please select the Identity Document(s) (ID) you wish to apply for:
+fields:
+ - no label: id_apply
+   datatype: checkboxes
+   choices:
+      - "[FILE SAlicence.jpg, 2in] Drivers Licence": drivers_licence
+      - "[FILE poac.jpg, 2in] Proof of Age Card": proof_of_age
+      - "[FILE seniors.jpg, 2in] Seniors Card": seniors_card
+      - "[FILE tfn.png, 2in] Tax File Number": tax_file_number
+      - "[FILE bc.gif, 2in] Birth Certificate": birth_certificate
+      - "[FILE passport.jpg, 2in] Passport": passport
+      - "[FILE medicare.jpg, 2in] Medicare Card": medicare_card
+      - "[FILE chc.png, 2in] Centrelink Health Care Card": centrelink_card   
+   none of the above: False
+---
+decoration: id current
+question: The Documents You Have
+subquestion: |
+  Please select the Identity Document(s) (ID) you currently have:
+fields:
+  - no label: id_documents_has
+    datatype: checkboxes
+    choices:
+      - "[FILE SAlicence.jpg, 2in] Drivers Licence": drivers_licence
+      - "[FILE poac.jpg, 2in] Proof of Age Card": proof_of_age
+      - "[FILE seniors.jpg, 2in] Seniors Card": seniors_card
+      - "[FILE tfn.png, 2in] Tax File Number": tax_file_number
+      - "[FILE bc.gif, 2in] Birth Certificate": birth_certificate
+      - "[FILE passport.jpg, 2in] Passport": passport
+      - "[FILE medicare.jpg, 2in] Medicare Card": medicare_card
+      - "[FILE chc.png, 2in] Centrelink Health Care Card": centrelink_card
+---
+images:
+ passport: passport.jpg
+ proof of age card: poac.jpg
+ seniors card: seniors.jpg
+ tax file number: tfn.png
+ drivers licence: SAlicence.jpg
+ medicare card: medicare.jpg
+ centrelink health care card: chc.png
+ birth certificate: bc.gif
+ hutt street logo: huttstreet.png
+ age icon: 18plus.svg
+ id current: idcardscurrent.png
+ id want: idwant.png
+ sa icon: saicon.png
+ tick icon: tickicon.png
+ no icon: noicon.webp
+---
+template: example_documents
+content: |
+  ### Statutory Declaration
+  A **statutory declaration** form can be filled out if you do not have any  primary documents. You can use this form as a primary document. It is a written statement that you sign and declare to be true in front of an authorised witness, such as a **Justice of the Peace.**
+  
+  You will only be required to submit one statutory declaration to declare that you do not have any form of ID.
+  
+  If you require assistance, a staff member of Hutt Street Centre may be able to help you fill out and submit your statutory declaration form. 
+  
+  To find where you can access a Justice of the Peace in South Australia, click [here](https://www.sa.gov.au/topics/rights-and-law/rights-and-responsibilities/justices-of-the-peace/find-a-jp)
+  
+  You can fill out a statutory declaration [here](https://www.sa.gov.au/__data/assets/pdf_file/0011/11432/MR28.pdf)
+  ### Primary Documents
+  A **primary document** is an identity document that must include your full name and date of birth. It may also include a combination of your photograph, address, place of birth, or signature. 
+  
+  Examples of **primary documents** are:
+  
+  %for a_pd in required_documents:
+  %if required_documents[a_pd]['id_type'] == 'primary':
+  %if a_pd not in has_primary_documents_list:
+  - ${required_documents[a_pd]['Name']}
+  %endif
+  %endif
+  %endfor 
+  
+  ### Secondary Documents
+  A **secondary document** is a document that provides some personal information. This could include a combination of your photograph, full name, address, date of birth, or signature.
+  
+  Examples of **secondary documents** you can use may be:
+  
+    * A current entitlement card issued by a Commonwealth Government Department (e.g. a Medicare card, Centrelink Basics Card);
+    * A current credit card or ATM card from a financial institution (e.g. Commonwealth Bank, BankSA etc.);
+    * Telephone, gas or electricity account not more than six months old;    
+    * Water or local rates notice or land valuation notice not more than two years old;
+    * Evidence of electoral enrolment not more than two years old;    
+    * Centrelink Health Care Card;   
+    * Centrelink Commonwealth Seniors Health Card; and
+    * Department of Veteran Affairs pensioner concession card
+---
+template: table_code
+content: |
+  Question|Answer
+  -------|-------
+  Age Eligible| ${ YC_Age }
+  SA Resident| ${ sa_resident }
+  %if len(pretty_primary_documents_list) > 0:
+  You have these Primary Documents| ${ pretty_primary_documents_list.comma_and_list() }
+  %endif
+  %if len(pretty_secondary_documents_list) > 0:
+  You have these Secondary Documents| ${ pretty_secondary_documents_list.comma_and_list() }
+  %endif
+---
+template: primary_secondary_docs
+content: |
+  %if required_documents[an_item]['primary_docs']> len(has_primary_documents_list):
+  
+  You need **${required_documents[an_item]['primary_docs']}**
+  'primary' document(s) to apply.  You currently have 
+  **${len(has_primary_documents_list)}** primary document(s)
+  %endif
+  
+  %if required_documents[an_item]['secondary_docs']> len(has_secondary_documents_list):
+  
+  You need **${required_documents[an_item]['secondary_docs']}**
+  'secondary' document(s) to apply.  You currently have 
+  **${len(has_secondary_documents_list)}** secondary document(s)
+  %endif
+---
+template: document_explainer
+content: |
+  % if id_apply['drivers_licence']:
+  # Applying for a Drivers Licence 
+  For people aged at least 16 years who wish to obtain a South Australian driver’s licence and have never held an interstate or overseas licence. 
+  
+  You must obtain a learner's permit before you can become a fully licensed driver. 
+  
+  To book a learner's theory test, call Service SA on **13 10 84**.
+  
+  For more information about bookings, fees and tests, click [here](https://www.sa.gov.au/topics/driving-and-transport/licences/new-drivers)
+  % endif
+  
+  % if id_apply['proof_of_age']:
+   
+  # Applying for a Proof of Age Card
+   
+  If you have a South Australian photographic driver’s licence or learner’s permit, or have had one in the past, you can apply [online](https://www.sa.gov.au/topics/driving-and-transport/licences/proof-of-age-card)
+  
+  If you haven't previously established your identity with Service SA, you'll need to apply in person. Please visit service.sa.gov.au 
+  or call **13 10 84** for assistance.
+  % endif
+  
+  % if id_apply['tax_file_number']:
+  
+  # Applying for a Tax File Number
+  
+  To apply for a Tax File Number online, click [here](https://taxfilenumber.org/registration-form/) and follow the on-screen prompts.
+  % endif
+  
+  % if id_apply['birth_certificate']:
+ 
+  # Applying for a Birth Certificate
+  
+  To apply for a birth certificate, you will need either a **driver’s licence** or a **proof of age card** to get started. If you do not have either of these documents, click the **restart** button at the bottom of this page.
+  
+  You can apply for a Birth Certificate [here](https://bdm.cbs.sa.gov.au/bdmsaonline/dbnet.aspx?DBCGM=1&PRPRC=OAC)
+  
+  % endif
+  
+  % if id_apply['passport']:
+  
+  # Applying for a Passport
+  
+  You must first create an AusPassport account [here](https://online.passports.gov.au/Infiniti/Produce/Account/Login?ReturnUrl=%2FInfiniti%2FProduce%2Fwizard%2F8100b655-57b0-47fb-84c2-44fdbbb02c02%2F)
+  
+  To create an account, you must:
+  
+  - confirm you are aged 18 or over
+  
+  - accept the terms and conditions of use
+  
+  - provide personal details (using the name to be displayed on your passport)
+  
+  - provide an email address
+  
+  - set a password and secret questions and answers to assist with self-service password resets.
+  
+  Once you have completed the steps above, an email will be sent to your email address with a link to verify and activate your account.
+  
+  **Once you have created your account, follow this quick guide process to apply for a passport online [here](https://www.passports.gov.au/passports-explained/quick-guide-online-application)**
+  
+  % endif
+  
+  % if id_apply['seniors_card']:
+  
+  # Applying for a Seniors Card
+  
+  To apply for a Seniors Card online, click [here](https://seniorscard.secure.force.com/SeniorsCard/) and follow the on-screen prompts.
+  
+  To apply online you'll need one of the following:
+  
+  - Driver's Licence Number
+  
+  - Medicare Number
+  
+  - Pension Card Number.
+  
+  There is no income or pension limit and the card is issued free of charge.
+  % endif
+  
+  % if id_apply['medicare_card']:
+  
+  # Applying for Medicare Card
+  
+  To apply for a Medicare Card online, click [here](https://www.servicesaustralia.gov.au/individuals/subjects/how-enrol-and-get-started-medicare) and follow the on-screen prompts.
+  
+  Required supporting documents will differ depending on your citizenship status. Follow the on-page instructions.
+  
+  % endif
+  
+  % if id_apply['centrelink_card']:
+  
+  # Applying for a Low-Income Centrelink Health Care Card
+  
+  To apply for a Low-Income Health Care Card or a Health Care Card for a foster child online, click [here](https://www.servicesaustralia.gov.au/individuals/services/centrelink/low-income-health-care-card/who-can-get-card) and follow the on-screen prompts.
+  
+  You can get a Low-Income Health Care Card if you’re either:
+  
+  - 19 or older
+  
+  - younger than 19 and are independent
+  
+  - younger than 19 and eligible for Family Tax Benefit.
+  
+  % endif
+---
+default screen parts:
+  post: |
+    <div style="display: flex; height: 200px; align-items: flex-end; flex-direction: row-reverse">
+    <div style="margin: 5px"><img src="https://staff.flinders.edu.au/etc.clientlibs/flinders/clientlibs/clientlib-site/resources/images/flinderuni_main_logo_black.png" height="40">
+    </div>
+    <div style="margin: 5px; text-align: center">
+    <cite><small><i>
+    Developed by Flinders University in collaboration with Hutt Street Centre
+    </i></small></cite>
+    </div>
+    </div>
+---
+
