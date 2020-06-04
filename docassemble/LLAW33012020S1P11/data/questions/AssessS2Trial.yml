@@ -1,4 +1,3 @@
-  
 ---
 objects:
   - endpoint: DADict
@@ -7,6 +6,7 @@ objects:
   - has_secondary_documents_list: DAList.using(auto_gather=False)
   - pretty_secondary_documents_list: DAList.using(auto_gather=False)
 ---
+## Introductory page. Provides a legal disclaimer.
 decoration: hutt street logo
 mandatory: True
 question: MyDocs 
@@ -25,6 +25,7 @@ buttons:
   - "I accept and want to continue": continue
   - "I do not accept": restart
 ---
+## Application design.
 features:
   css: IDNavigationColours.css
   debug: True
@@ -40,6 +41,7 @@ metadata:
       organization: Flinders University
   revision_date: 10-June-2020
 ---
+## Code addresses eligibility dependent on age and residence.
 mandatory: True
 code: |
   if YC_Age_ok and sa_resident_ok == True:
@@ -51,6 +53,7 @@ code: |
   else: 
     endpoint['ineligible']
 ---
+## Asks question of age.
 decoration: age icon
 question: |
   Age 
@@ -61,18 +64,21 @@ fields:
       - Yes
       - No
 ---
+## Sets values for age.
 code: |
   if YC_Age == 'Yes':
     YC_Age_ok = True
   else:
     YC_Age_ok = False
 ---
+## Sets values for residence.
 code: |
   if sa_resident == 'Yes':
     sa_resident_ok = True
   else:
     sa_resident_ok = False    
 ---
+## Endpoint screen if user is ineligible to complete application. Users under 18 years of age will be directed to Youth Services.
 event: endpoint['ineligible']
 decoration: no icon
 question: Eligibility Requirements Not Met
@@ -88,21 +94,7 @@ buttons:
   - "Youth Services": exit
     url: https://officeforyouth.sa.gov.au/resources
 ---
-event: endpoint['youth_ineligible']
-decoration: no icon
-question: Age Eligibility Requirements Not Met
-subquestion: |
-  It appears you do not meet our age eligibility requirements. 
-  
-  **This application can only be used if you are 18+ years of Age.**
-  
-  Please see SA Youth Services for your enquiry.
-  
-buttons:
-  - Restart: restart
-  - "Youth Services": exit
-    url: https://officeforyouth.sa.gov.au/resources
----
+## Endpoint screen if user is ineligible to complete application. Users are not SA residents, they will be directed to Hutt St Centre webiste.
 event: endpoint['resident_ineligible']
 decoration: no icon
 question: Resident Eligibility Requirements Not Met
@@ -116,6 +108,7 @@ buttons:
   - "Exit": exit
     url: https://www.huttstcentre.org.au/
 ---
+## Primary and secondary documents required for different types of ID.
 variable name: required_documents
 use objects: True
 data:
@@ -196,6 +189,7 @@ code: |
     pretty_secondary_documents_list.append(required_documents[an_item]['Name'])
   pretty_secondary_documents_list.gathered = True
 ---
+## End screen. Directs users to required links and information regarding their selected ID.
 decoration: tick icon
 event: endpoint['eligible']
 question: MyDocs Completed
@@ -240,6 +234,7 @@ buttons:
  - Exit: exit
    url: https://www.huttstcentre.org.au/
 ---
+## Asks question of user's residence.
 decoration: sa icon
 question: |
   Location of Residence
@@ -250,6 +245,7 @@ fields:
       - Yes
       - No
 ---
+## Questions asks user for their wanted documents. Visible images are included.
 decoration: id want
 question: The Documents You Want
 subquestion: |
@@ -268,6 +264,7 @@ fields:
       - "[FILE chc.png, 2in] Centrelink Health Care Card": centrelink_card   
    none of the above: False
 ---
+## Question asks user for their existing documents. Visible images are included.
 decoration: id current
 question: The Documents You Have
 subquestion: |
@@ -285,6 +282,7 @@ fields:
       - "[FILE medicare.jpg, 2in] Medicare Card": medicare_card
       - "[FILE chc.png, 2in] Centrelink Health Care Card": centrelink_card
 ---
+## Image files.
 images:
  passport: passport.jpg
  proof of age card: poac.jpg
@@ -302,6 +300,7 @@ images:
  tick icon: tickicon.png
  no icon: noicon.webp
 ---
+## Statutory Declaration, primary and secondary document information. Examples and definitions provided.
 template: example_documents
 content: |
   ### Statutory Declaration
@@ -341,6 +340,7 @@ content: |
     * Centrelink Commonwealth Seniors Health Card; and
     * Department of Veteran Affairs pensioner concession card
 ---
+## Table code which appears on the end screen.
 template: table_code
 content: |
   Question|Answer
@@ -354,6 +354,7 @@ content: |
   You have these Secondary Documents| ${ pretty_secondary_documents_list.comma_and_list() }
   %endif
 ---
+## Primary and secondary documents. Information provided changes depedning on the user's existing ID (if any).
 template: primary_secondary_docs
 content: |
   %if required_documents[an_item]['primary_docs']> len(has_primary_documents_list):
@@ -370,6 +371,7 @@ content: |
   **${len(has_secondary_documents_list)}** secondary document(s)
   %endif
 ---
+## End screen. Links for users according to selected ID.
 template: document_explainer
 content: |
   % if id_apply['drivers_licence']:
@@ -477,6 +479,7 @@ content: |
   
   % endif
 ---
+## Flinders Attribution.
 default screen parts:
   post: |
     <div style="display: flex; height: 200px; align-items: flex-end; flex-direction: row-reverse">
@@ -489,4 +492,3 @@ default screen parts:
     </div>
     </div>
 ---
-
