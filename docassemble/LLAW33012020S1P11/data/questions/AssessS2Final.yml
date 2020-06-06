@@ -9,9 +9,9 @@ objects:
 ## Introductory page. Provides a legal disclaimer.
 decoration: hutt street logo
 mandatory: True
-question: MyDocs 
+question: MyDocs
 subquestion: |
-  Welcome to  **MyDocs!**
+  Welcome to [FILE mydocs_logo.png]
   
   MyDocs is Hutt Street Centre's Identity Document Navigation service that will help to guide you through the process of obtaining an identity document.
   
@@ -215,7 +215,7 @@ event: endpoint['eligible']
 question: MyDocs Completed
 subquestion: |
   
-  You have now completed MyDocs!
+  You have now completed [FILE mydocs_logo.png]
   
   Below is a summary of the information you have provided. **Please check to ensure the information you have provided is correct.** 
   
