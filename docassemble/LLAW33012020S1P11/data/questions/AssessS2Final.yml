@@ -323,16 +323,6 @@ images:
 ## Statutory Declaration, primary and secondary document information. Examples and definitions provided.
 template: example_documents
 content: |
-  ### Statutory Declaration
-  A **statutory declaration** form can be filled out if you do not have any  primary documents. You can use this form as a primary document. It is a written statement that you sign and declare to be true in front of an authorised witness, such as a **Justice of the Peace.**
-  
-  You will only be required to submit one statutory declaration to declare that you do not have any form of ID.
-  
-  If you require assistance, a staff member of Hutt Street Centre may be able to help you fill out and submit your statutory declaration form. 
-  
-  To find where you can access a Justice of the Peace in South Australia, click [here](https://www.sa.gov.au/topics/rights-and-law/rights-and-responsibilities/justices-of-the-peace/find-a-jp)
-  
-  You can fill out a statutory declaration [here](https://www.sa.gov.au/__data/assets/pdf_file/0011/11432/MR28.pdf)
   ### Primary Documents
   A **primary document** is an identity document that must include your full name and date of birth. It may also include a combination of your photograph, address, place of birth, or signature. 
   
@@ -345,6 +335,17 @@ content: |
   %endif
   %endif
   %endfor 
+  
+  ### Statutory Declaration
+  A **statutory declaration** form can be filled out if you **do not have any  primary documents.** You can use this form as a primary document. It is a written statement that you sign and declare to be true in front of an authorised witness, such as a **Justice of the Peace.**
+  
+  You will only be required to submit one statutory declaration to declare that you do not have any form of ID.
+  
+  If you require assistance, a staff member of Hutt Street Centre may be able to help you fill out and submit your statutory declaration form. 
+  
+  To find where you can access a Justice of the Peace in South Australia, click [here](https://www.sa.gov.au/topics/rights-and-law/rights-and-responsibilities/justices-of-the-peace/find-a-jp)
+  
+  You can fill out a statutory declaration [here](https://www.sa.gov.au/__data/assets/pdf_file/0011/11432/MR28.pdf)  
   
   ### Secondary Documents
   A **secondary document** is a document that provides some personal information. This could include a combination of your photograph, full name, address, date of birth, or signature.
