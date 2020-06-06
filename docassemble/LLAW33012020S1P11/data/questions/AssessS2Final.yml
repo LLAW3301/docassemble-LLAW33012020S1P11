@@ -7,13 +7,14 @@ objects:
   - pretty_secondary_documents_list: DAList.using(auto_gather=False)
 ---
 ## Introductory page. Provides a legal disclaimer.
-decoration: hutt street logo
 mandatory: True
 question: MyDocs
 subquestion: |
-  Welcome to [FILE mydocs_logo.png]
+  ##[FILE huttstreet.png, 3in]
   
-  MyDocs is Hutt Street Centre's Identity Document Navigation service that will help to guide you through the process of obtaining an identity document.
+  Welcome to [FILE mydocs_logo.png, 1.7in]
+  
+  MyDocs is Hutt Street Centre's identity document navigation service that will help to guide you through the process of obtaining an identity document.
   
   If you need assistance to use this service, please ask a staff member of Hutt Street Centre. 
   
@@ -215,7 +216,7 @@ event: endpoint['eligible']
 question: MyDocs Completed
 subquestion: |
   
-  You have now completed [FILE mydocs_logo.png]
+  You have now completed [FILE mydocs_logo.png, 1.7in]
   
   Below is a summary of the information you have provided. **Please check to ensure the information you have provided is correct.** 
   
@@ -278,8 +279,8 @@ fields:
       - "[FILE poac.jpg, 2in] Proof of Age Card": proof_of_age
       - "[FILE seniors.jpg, 2in] Seniors Card": seniors_card
       - "[FILE tfn.png, 2in] Tax File Number": tax_file_number
-      - "[FILE bc.gif, 2in] Birth Certificate": birth_certificate
-      - "[FILE passport.jpg, 2in] Passport": passport
+      - "[FILE bc.gif, 1in] Birth Certificate": birth_certificate
+      - "[FILE passport.jpg, 1in] Passport": passport
       - "[FILE medicare.jpg, 2in] Medicare Card": medicare_card
       - "[FILE chc.png, 2in] Centrelink Health Care Card": centrelink_card   
    none of the above: False
@@ -297,13 +298,14 @@ fields:
       - "[FILE poac.jpg, 2in] Proof of Age Card": proof_of_age
       - "[FILE seniors.jpg, 2in] Seniors Card": seniors_card
       - "[FILE tfn.png, 2in] Tax File Number": tax_file_number
-      - "[FILE bc.gif, 2in] Birth Certificate": birth_certificate
-      - "[FILE passport.jpg, 2in] Passport": passport
+      - "[FILE bc.gif, 1in] Birth Certificate": birth_certificate
+      - "[FILE passport.jpg, 1in] Passport": passport
       - "[FILE medicare.jpg, 2in] Medicare Card": medicare_card
       - "[FILE chc.png, 2in] Centrelink Health Care Card": centrelink_card
 ---
 ## Image files.
 images:
+ hutt st logo: huttstreet.png
  passport: passport.jpg
  proof of age card: poac.jpg
  seniors card: seniors.jpg
@@ -312,7 +314,6 @@ images:
  medicare card: medicare.jpg
  centrelink health care card: chc.png
  birth certificate: bc.gif
- hutt street logo: huttstreet.png
  age icon: 18plus.svg
  id current: idcardscurrent.png
  id want: idwant.png
