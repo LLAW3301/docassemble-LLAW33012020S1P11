@@ -82,21 +82,6 @@ code: |
     sa_resident_ok = False    
 ---
 ## Endpoint screen if user is ineligible to complete application. Users under 18 years of age will be directed to Youth Services.
-event: endpoint['ineligible']
-decoration: no icon
-question: Eligibility Requirements Not Met
-subquestion: |
-  It appears you do not meet our eligibility requirements. 
-  
-  **This application can only be used if you are 18+ years of Age.**
-  
-  Please see SA Youth Services for your enquiry.
-  
-buttons:
-  - Restart: restart
-  - "Youth Services": exit
-    url: https://officeforyouth.sa.gov.au/resources
----
 event: endpoint['youth_ineligible']
 decoration: no icon
 question: Age Eligibility Requirements Not Met
