@@ -34,15 +34,15 @@ features:
 ---
 metadata:
   title: |
-    ‘MyDocs’ Identity Document Navigation
+    MyDocs: Identity Document ('ID') Navigatior
   short title: |
-    'My Docs'
+    My Docs
   description: |
     Hutt St Centre -  ID Navigation Application
   authors:
     - name: Yianni Chapley, Olympia Balopitos, Laura Stephenson
       organization: Flinders University
-  revision_date: 10-June-2020
+  revision_date: 8-June-2020
 ---
 ## Code addresses eligibility dependent on age and residence.
 mandatory: True
